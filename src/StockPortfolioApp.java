@@ -1,5 +1,19 @@
-public class App {
+/*
+** Class Name: IFT-210
+
+** Author: Kyle hODO
+
+** Date Created: 06/12/2023
+
+** Purpose: This Application is to demonstrate
+         stock portfolio that allows you to do
+         transactions like buying and selling 
+         stock. With the ability to deposit and 
+         withdraw liek a brokerage account
+*/
+
+public class StockPortfolioApp {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        
     }
 }
