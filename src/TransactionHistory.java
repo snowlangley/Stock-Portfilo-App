@@ -1,62 +1,92 @@
+/*
+** Class Name: IFT-210
+
+** Author: Kyle Hodo
+
+** Date Created: 06/12/2023
+
+** Purpose: This grabs all the values entered in PortfolioManger.java
+*********** stores them in the values creted here in order to print all 
+*********** all data in a toPrint() method that fits with the corrsponding 
+*********** transHistory medthod in PortfolioManager.java.
+*/
+
+
 
 public class TransactionHistory {
     private String ticker, transDate, transType;
     private double qty, costBasis;
 
-    public TransactionHistory() {
-        ticker = "";
-        transDate = "";
-        transType = "";
-        qty = 0.0;
-        costBasis = 1.00;
 
+    // overload constructor
 
-    }
+    public TransactionHistory(String ticker, String transDate, String transType, double qty, double costBasis) {
+        this.ticker = ticker;
+        this.transDate = transDate;
+        this.transType = transType;
+        this.qty = qty;
+        this.costBasis = costBasis;
 
-    // getter methods 
-
-    public void getTicker() {
-
-    }
-
-    public void getTransDate() {
-
-    }
-
-    public void getTransType() {
-
-    }
-
-    public void getQty() {
-
-    }
-
-    public void getCostBasis() {
 
     }
 
     // setter methods
 
-    public String setTicker() {
+    public void setTicker(String ticker) {
+        this.ticker = ticker;
 
     }
 
-    public String setTransDate() {
+    public void setTransDate(String transDate) {
+        this.transDate = transDate;
+    }
+
+    public void setTransType(String transType) {
+        this.transType = transType;
 
     }
 
-    public String setTransType() {
+    public void setQty(double quantity) {
+        this.qty = quantity;
+    }
+
+    public void setCostBasis(double costBasis) {
+        this.costBasis = costBasis;
 
     }
 
-    public double setQty() {
+    // getter methods 
+
+    public String getTicker() {
+        return this.ticker;
 
     }
 
-    public double setCostBasis() {
-
+    public String getTransDate() {
+        return this.transDate;
     }
 
+    public String getTransType() {
+        return this.transType;
+    }
+
+    public double getQty() {
+        return this.qty;
+    }
+
+    public double getCostBasis() {
+        return this.costBasis;
+    }
+
+
+    // toPrint() method
+
+
+
+    public void toPrint() {
+        System.out.printf("%-12s %-8s %-16s $%-16s %-8s\n",
+         transDate, ticker, qty, costBasis, transType);
+    }
 
 
 
