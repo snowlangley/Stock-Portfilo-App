@@ -11,6 +11,7 @@ public class DatabaseConnection {
     // Define connection parameters
     private static String URL;
 
+    // Database file
     static {
         try (FileInputStream input = new FileInputStream("dbconfig.properties")) {
             Properties properties = new Properties();
@@ -22,7 +23,7 @@ public class DatabaseConnection {
             URL = null;
         }
     }
-
+    // Establish the connection
     public static Connection getConnection() {
         if (URL == null) {
             System.out.println("Database connection not available");
@@ -44,7 +45,6 @@ public class DatabaseConnection {
             // Load the MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Establish the connection
             return DriverManager.getConnection(URL, dbName, dbPass);
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC Driver not found.");
