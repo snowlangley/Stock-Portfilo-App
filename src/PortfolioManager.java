@@ -34,6 +34,11 @@ class PortfolioManager {
       System.out.println("Database connection established");
       // Initialize the database schema
       DatabaseInitializer.initializeDatabase(connection);
+
+      // Add Portfolio
+      portfolioManager.addPortfolio(connection);
+
+      // Start App
       portfolioManager.StockApp();
     } else {
       System.out.println("Database connection not established");
@@ -47,7 +52,7 @@ class PortfolioManager {
     // Propmt for portfolio name and user's name
     System.out.println("Enter the name of the portfolio: ");
     String portfolioName = scanner.nextLine();
-    System.out.println("Enter the price of the portfolio: ");
+    System.out.println("Enter the name of the portfolio: ");
     String ownerName = scanner.nextLine();
 
     // Save to DB
