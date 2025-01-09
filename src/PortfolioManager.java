@@ -28,16 +28,20 @@ class PortfolioManager {
     PortfolioManager portfolioManager = new PortfolioManager();
     // Test Connection
     Connection connection = DatabaseConnection.getConnection();
-    // Initialize the database schema
-    DatabaseInitializer.initializeDatabase();
     if (connection != null) {
       System.out.println("Database connection established");
     } else {
       System.out.println("Database connection not established");
     }
+    // Initialize the database schema
+    DatabaseInitializer.initializeDatabase(connection);
     portfolioManager.StockApp();
 
   }
+
+  // Add Portfolio
+
+
 
   // Stock Portfolio Application
 

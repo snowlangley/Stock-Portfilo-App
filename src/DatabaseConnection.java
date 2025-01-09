@@ -13,10 +13,12 @@ public class DatabaseConnection {
 
     // Database file
     static {
-        try (FileInputStream input = new FileInputStream("dbconfig.properties")) {
+        try (FileInputStream input = new FileInputStream("src/dbconfig.properties")) {
+            System.out.println("Attempting to load properties file...");
             Properties properties = new Properties();
             properties.load(input);
             URL = properties.getProperty("url");
+            System.out.println("Loaded URL: " + URL);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Error loading properties file");
@@ -44,8 +46,9 @@ public class DatabaseConnection {
 
             // Load the MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            return DriverManager.getConnection(URL, dbName, dbPass);
+            Connection connection = DriverManager.getConnection(URL, dbName, dbPass);
+            System.out.println("Database connection established");
+            return connection;
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC Driver not found.");
             e.printStackTrace();
