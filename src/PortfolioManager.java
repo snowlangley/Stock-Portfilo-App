@@ -12,6 +12,8 @@
          withdraw like a brokerage account.
 */
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,17 +32,36 @@ class PortfolioManager {
     Connection connection = DatabaseConnection.getConnection();
     if (connection != null) {
       System.out.println("Database connection established");
+      // Initialize the database schema
+      DatabaseInitializer.initializeDatabase(connection);
+      portfolioManager.StockApp();
     } else {
       System.out.println("Database connection not established");
     }
-    // Initialize the database schema
-    DatabaseInitializer.initializeDatabase(connection);
-    portfolioManager.StockApp();
 
   }
 
   // Add Portfolio
+  public void addPortfolio(Connection connection) {
+    Scanner scanner = new Scanner(System.in);
+    // Propmt for portfolio name and user's name
+    System.out.println("Enter the name of the portfolio: ");
+    String portfolioName = scanner.nextLine();
+    System.out.println("Enter the price of the portfolio: ");
+    String ownerName = scanner.nextLine();
 
+    // Save to DB
+    String query = "INSERT INTO portfolio VALUES (Name, Owner) VALUES (?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setString(1, portfolioName);
+      statement.setString(2, ownerName);
+      statement.executeUpdate();
+      System.out.println("Portfolio added successfully");
+
+    } catch (SQLException e) {
+      System.out.println("Error adding portfolio" + e.getMessage());
+    }
+  }
 
 
   // Stock Portfolio Application
