@@ -52,7 +52,7 @@ class PortfolioManager {
     // Propmt for portfolio name and user's name
     System.out.println("Enter the name of the portfolio: ");
     String portfolioName = scanner.nextLine();
-    System.out.println("Enter the name of the portfolio: ");
+    System.out.println("Enter the name of the portfolio owner: ");
     String ownerName = scanner.nextLine();
 
     // Save to DB
