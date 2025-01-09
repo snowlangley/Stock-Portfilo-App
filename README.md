@@ -48,6 +48,7 @@ The **Portfolio Manager Application** is a Java-based system designed to simulat
 1. Ensure a MySQL server is installed and running.
 
 db.url=jdbc:mysql://<HOST>:<PORT>/<DATABASE_NAME>?useSSL=false&serverTimezone=UTC
+
 3. Create a database named `PortfolioDB` and configure the schema.
 
 ### Configuration
