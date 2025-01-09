@@ -6,9 +6,9 @@
 ** Date Created: 06/12/2023
 
 ** Purpose: This grabs all the values entered in PortfolioManger.java
-*********** stores them in the values creted here in order to print all 
-*********** all data in a toPrint() method that fits with the corrsponding 
-*********** transHistory medthod in PortfolioManager.java.
+*********** stores them in the values created here in order to print all
+*********** all data in a toPrint() method that fits with the corresponding
+*********** transHistory method in PortfolioManager.java.
 */
 
 

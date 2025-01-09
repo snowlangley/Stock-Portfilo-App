@@ -11,6 +11,7 @@
          stock. With the ability to deposit and 
          withdraw like a brokerage account.
 */
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,10 +22,17 @@ class PortfolioManager {
 
   // Store transactions
 
-  private ArrayList < TransactionHistory > portfolioList = new ArrayList < TransactionHistory > ();
+  private final ArrayList < TransactionHistory > portfolioList = new ArrayList<>();
 
   public static void main(String[] args) {
     PortfolioManager portfolioManager = new PortfolioManager();
+    // Test Connection
+    Connection connection = DatabaseConnection.getConnection();
+    if (connection != null) {
+      System.out.println("Database connection established");
+    } else {
+      System.out.println("Database connection not established");
+    }
     portfolioManager.StockApp();
 
   }
@@ -42,46 +50,35 @@ class PortfolioManager {
       scnr.nextLine();
       try {
 
-        switch (userSelection) {
-          // -----------Exit Program----------------
-        case 0:
-          System.out.println("Exiting........");
-          break;
+          switch (userSelection) {
+              // -----------Exit Program----------------
+              case 0 -> System.out.println("Exiting........");
 
-          // -----------Deposit Money-----------
-        case 1:
-          depositCash();
-          break;
 
-          // -----------Withdraw Money-----------
-        case 2:
-          withdrawCash();
-          break;
+              // -----------Deposit Money-----------
+              case 1 -> depositCash();
 
-          // -----------Buy a stock-----------
-        case 3:
-          buyStock();
-          break;
 
-          // -----------Sell a stock-----------
-        case 4:
-          sellStock();
-          break;
+              // -----------Withdraw Money-----------
+              case 2 -> withdrawCash();
 
-          // -----------Display Transaction History-----------
-        case 5:
-          displayTransactionHistory();
-          break;
 
-          // -----------Display Portfolio-----------
-        case 6:
-          displayPortfolio();
-          break;
+              // -----------Buy a stock-----------
+              case 3 -> buyStock();
 
-        default:
-          System.out.println("Not an option! Please select an option 0 - 6.");
-          break;
-        }
+
+              // -----------Sell a stock-----------
+              case 4 -> sellStock();
+
+
+              // -----------Display Transaction History-----------
+              case 5 -> displayTransactionHistory();
+
+
+              // -----------Display Portfolio-----------
+              case 6 -> displayPortfolio();
+              default -> System.out.println("Not an option! Please select an option 0 - 6.");
+          }
 
       } catch (InputMismatchException e) {
         System.out.println("Please enter a number!");
@@ -246,7 +243,7 @@ class PortfolioManager {
       TransactionHistory cashTransaction = new TransactionHistory("CASH", transDate, "DEPOSIT", total, 1.00);
       portfolioList.add(cashTransaction);
 
-      System.out.println("Stock sold, succcess!");
+      System.out.println("Stock sold, success!");
       System.out.println();
       //sellStock.close();
     } catch (InputMismatchException e) {
