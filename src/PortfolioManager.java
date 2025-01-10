@@ -13,365 +13,155 @@
 */
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-class PortfolioManager {
-
-  // Store transactions
-
-  private final ArrayList < TransactionHistory > portfolioList = new ArrayList<>();
+public class PortfolioManager {
 
   public static void main(String[] args) {
     PortfolioManager portfolioManager = new PortfolioManager();
-    // Test Connection
     Connection connection = DatabaseConnection.getConnection();
+
     if (connection != null) {
-      System.out.println("Database connection established");
-      // Initialize the database schema
+      System.out.println("Database connection established.");
       DatabaseInitializer.initializeDatabase(connection);
 
-      // Add Portfolio
-      portfolioManager.addPortfolio(connection);
-
-      // Start App
-      portfolioManager.StockApp();
+      portfolioManager.showMainMenu(connection);
     } else {
-      System.out.println("Database connection not established");
-    }
-
-  }
-
-  // Add Portfolio
-  public void addPortfolio(Connection connection) {
-    Scanner scanner = new Scanner(System.in);
-    // Propmt for portfolio name and user's name
-    System.out.println("Enter the name of the portfolio: ");
-    String portfolioName = scanner.nextLine();
-    System.out.println("Enter the name of the portfolio owner: ");
-    String ownerName = scanner.nextLine();
-
-    // Save to DB
-    String query = "INSERT INTO portfolio VALUES (Name, Owner) VALUES (?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-      statement.setString(1, portfolioName);
-      statement.setString(2, ownerName);
-      statement.executeUpdate();
-      System.out.println("Portfolio added successfully");
-
-    } catch (SQLException e) {
-      System.out.println("Error adding portfolio" + e.getMessage());
+      System.err.println("Database connection not established.");
     }
   }
 
-
-  // Stock Portfolio Application
-
-  public void StockApp() {
+  private void showMainMenu(Connection connection) {
     Scanner scnr = new Scanner(System.in);
-
     int userSelection = -1;
 
     while (userSelection != 0) {
-      displayMenu();
-      userSelection = scnr.nextInt();
-      scnr.nextLine();
       try {
+        System.out.println("\nKyle Hodo Brokerage Account");
+        System.out.println("===============================");
+        System.out.println("0 - Exit");
+        System.out.println("1 - Create a New Portfolio");
+        System.out.println("2 - Access an Existing Portfolio");
+        System.out.print("Enter your choice: ");
 
-          switch (userSelection) {
-              // -----------Exit Program----------------
-              case 0 -> System.out.println("Exiting........");
+        userSelection = scnr.nextInt();
+        scnr.nextLine(); // Consume newline
 
-
-              // -----------Deposit Money-----------
-              case 1 -> depositCash();
-
-
-              // -----------Withdraw Money-----------
-              case 2 -> withdrawCash();
-
-
-              // -----------Buy a stock-----------
-              case 3 -> buyStock();
-
-
-              // -----------Sell a stock-----------
-              case 4 -> sellStock();
-
-
-              // -----------Display Transaction History-----------
-              case 5 -> displayTransactionHistory();
-
-
-              // -----------Display Portfolio-----------
-              case 6 -> displayPortfolio();
-              default -> System.out.println("Not an option! Please select an option 0 - 6.");
-          }
-
+        switch (userSelection) {
+          case 0 -> System.out.println("Exiting... Thank you!");
+          case 1 -> addPortfolio(connection);
+          case 2 -> accessExistingPortfolio(connection);
+          default -> System.out.println("Invalid choice. Please select 0, 1, or 2.");
+        }
       } catch (InputMismatchException e) {
-        System.out.println("Please enter a number!");
-        scnr.nextLine();
-
+        System.out.println("Please enter a valid number!");
+        scnr.nextLine(); // Clear invalid input
       }
     }
 
     scnr.close();
   }
 
-  // User Menu
+  public void addPortfolio(Connection connection) {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Enter the name of the portfolio: ");
+    String portfolioName = scanner.nextLine();
 
-  private void displayMenu() {
-    System.out.println("Kyle Hodo Brokerage Account");
-    System.out.println("===============================");
-    System.out.println("0 - Exit\n1 - Deposit Cash\n2 - Withdraw Cash\n3 - Buy Stock\n4 - Sell Stock\n5 - Display Transaction History\n6 - Display Portfolio\nEnter option (0 to 6)");
+    System.out.print("Enter the name of the owner: ");
+    String ownerName = scanner.nextLine();
 
-  }
+    String query = "INSERT INTO Portfolios (Name, Owner) VALUES (?, ?)";
 
-  // Output result for selecting userOption 1 - Deposit Cash
+    try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+      preparedStatement.setString(1, portfolioName);
+      preparedStatement.setString(2, ownerName);
+      preparedStatement.executeUpdate();
 
-  private void depositCash() {
-    Scanner depositCash = new Scanner(System.in);
-    try {
-      System.out.println("Enter amount: ");
-      double amount = depositCash.nextDouble(); // cash amount
-      depositCash.nextLine(); 
+      ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+      if (generatedKeys.next()) {
+        int portfolioId = generatedKeys.getInt(1);
+        System.out.println("Portfolio created successfully with ID: " + portfolioId);
 
-      // Creating a date variable to output today's date
-
-      Date currentDate = new Date();
-      SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-      String transDate = dateFormat.format(currentDate);
-
-      TransactionHistory transaction = new TransactionHistory("CASH", transDate, "DEPOSIT", amount, 1.00);
-      portfolioList.add(transaction);
-
-      System.out.println("Deposit success!");
-      System.out.println();
-      //depositCash.close();
-    } catch (InputMismatchException e) {
-      System.out.println("Please enter an amount in accordance with your account balance.");
-      depositCash.nextLine();
-    }
-
-  }
-
-  // Output result for selecting userOption 2 - Withdraw Cash
-
-  private void withdrawCash() {
-    Scanner withdrawCash = new Scanner(System.in);
-    try {
-      System.out.println("Enter amount: ");
-      double amount = withdrawCash.nextDouble(); // cash amount 
-      withdrawCash.nextLine();
-
-      if (sufficientBalance(amount)) {
-
-        // Creating a date variable to output today's date
-
-
-        Date currDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        String transDate = dateFormat.format(currDate);
-
-        TransactionHistory transaction = new TransactionHistory("CASH", transDate, "WITHDRAW", -amount, 1.00);
-        portfolioList.add(transaction);
-
-        System.out.println("withdraw success!");
-
-      } else {
-        System.out.println("Insufficient balance.");
+        StockApp(connection, portfolioId);
       }
 
-      System.out.println();
-      //withdrawCash.close();
-    } catch (InputMismatchException e) {
-      System.out.println("Please enter an amount in accordance with your account balance.");
-      withdrawCash.nextLine();
+    } catch (Exception e) {
+      System.err.println("Error creating portfolio: " + e.getMessage());
     }
   }
 
-  // Output result for selecting userOption 3 - Purchase Stock
+  private void accessExistingPortfolio(Connection connection) {
+    String query = "SELECT * FROM Portfolios";
 
-  private void buyStock() {
-    Scanner buyStock = new Scanner(System.in);
-    try {
-      System.out.print("Enter stock ticker: ");
-      String ticker = buyStock.nextLine(); // Stock Name
+    try (Statement statement = connection.createStatement();
+         ResultSet resultSet = statement.executeQuery(query)) {
 
-      System.out.print("Enter quantity: ");
-      double quantity = buyStock.nextDouble(); // Amount of stocks
-      buyStock.nextLine();
-
-      System.out.print("Enter cost basis: ");
-      double costBasis = buyStock.nextDouble(); // cost per stock
-      buyStock.nextLine();
-
-      // logic to determine the amount of being added or removed
-
-      double total = quantity * costBasis;
-
-      if (sufficientBalance(total)) {
-
-        // Creating a date variable to output today's date
-
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        String transDate = dateFormat.format(currentDate);
-
-        TransactionHistory stockTransaction = new TransactionHistory(ticker, transDate, "BUY", quantity, costBasis);
-        portfolioList.add(stockTransaction);
-
-        TransactionHistory cashTransaction = new TransactionHistory("CASH", transDate, "WITHDRAW", -total, 1.00);
-        portfolioList.add(cashTransaction);
-
-        System.out.println("Stock purchased, thank you for purchase!");
-
-      } else {
-        System.out.println("Insufficient balance.");
-      }
-      System.out.println();
-      //buyStock.close();
-    } catch (InputMismatchException e) {
-      System.out.println("Please enter a number for quantity or cost basis");
-      buyStock.nextLine();
-
-    }
-
-  }
-
-  // Output result for selecting userOption 4 - Sell Stock
-
-  private void sellStock() {
-    Scanner sellStock = new Scanner(System.in);
-    try {
-      System.out.print("Enter stock ticker: ");
-      String ticker = sellStock.nextLine(); // Stock name
-
-      System.out.print("Enter quantity: ");
-      double quantity = sellStock.nextDouble(); // amount of stock
-      sellStock.nextLine();
-
-      System.out.print("Enter cost basis: ");
-      double costBasis = sellStock.nextDouble(); // cost per stock
-      sellStock.nextLine();
-
-      // Logic to determine how much will be added or subtracted
-
-      double total = quantity * costBasis;
-
-      // Creating a date variable to output today's date
-
-      Date currDate = new Date();
-      SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-      String transDate = dateFormat.format(currDate);
-
-      TransactionHistory stockTransaction = new TransactionHistory(ticker, transDate, "SELL", quantity, costBasis);
-      portfolioList.add(stockTransaction);
-
-      TransactionHistory cashTransaction = new TransactionHistory("CASH", transDate, "DEPOSIT", total, 1.00);
-      portfolioList.add(cashTransaction);
-
-      System.out.println("Stock sold, success!");
-      System.out.println();
-      //sellStock.close();
-    } catch (InputMismatchException e) {
-      System.out.println("Please enter a number for quantity or cost basis");
-      sellStock.nextLine();
-
-    }
-  }
-
-  // Output result for selecting userOption 5 - Transaction History
-
-  private void displayTransactionHistory() {
-    System.out.println("Transaction History:");
-    System.out.println();
-    System.out.printf("%-12s %-8s %-15s %-15s %s\n", "Date", "Ticker", "Quantity", "Cost Basis", "Trans Type");
-    System.out.println("==================================================================");
-
-    // use toPrint to the userInput
-    for (TransactionHistory transaction: portfolioList) {
-      transaction.toPrint();
-
-    }
-
-    System.out.println();
-
-  }
-
-  // Output result for selecting userOption 6 - Portfolio
-
-  private void displayPortfolio() {
-    System.out.println("Portfolio Information:");
-    System.out.println("Portfolio as of: " + getCurrentDate());
-    System.out.println("====================================");
-    System.out.println("Ticker Quantity");
-    System.out.println("=================");
-
-    double cashBalance = 0.0;
-    for (TransactionHistory transaction: portfolioList) {
-      if (transaction.getTicker().equals("CASH")) {
-        cashBalance += transaction.getQty();
-
+      System.out.println("\nExisting Portfolios:");
+      while (resultSet.next()) {
+        System.out.printf("ID: %d, Name: %s, Owner: %s\n",
+                resultSet.getInt("PortfolioID"),
+                resultSet.getString("Name"),
+                resultSet.getString("Owner"));
       }
 
+      Scanner scanner = new Scanner(System.in);
+      System.out.print("Enter the Portfolio ID to access: ");
+      int portfolioId = scanner.nextInt();
+
+      System.out.println("You selected Portfolio ID: " + portfolioId);
+
+      StockApp(connection, portfolioId);
+
+    } catch (Exception e) {
+      System.err.println("Error accessing portfolios: " + e.getMessage());
     }
-    System.out.println("CASH    " + cashBalance);
+  }
 
-    /* Used to check if the same ticker is in the list.
-    // if so then it will subtract the ticker from 
-    // its self to reflect the updated info when 
-    // userOption 6 is selected.
-    */
+  private void StockApp(Connection connection, int portfolioId) {
+    Scanner scanner = new Scanner(System.in);
+    TransactionHistory transactionHistory = new TransactionHistory(connection);
+    int userSelection = -1;
 
-    for (TransactionHistory transaction: portfolioList) {
-      if (!transaction.getTicker().equals("CASH")) {
-        if (transaction.getTransType().equals("BUY")) {
-          double quantity = transaction.getQty();
-          String ticker = transaction.getTicker();
+    while (userSelection != 0) {
+      try {
+        System.out.println("\nStock Management for Portfolio ID: " + portfolioId);
+        System.out.println("======================================");
+        System.out.println("0 - Exit to Main Menu");
+        System.out.println("1 - Add a Stock Entry");
+        System.out.println("2 - View Portfolio Transactions");
+        System.out.print("Enter your choice: ");
 
-          for (TransactionHistory sellTransaction: portfolioList) {
-            if (sellTransaction.getTicker().equals(ticker) && sellTransaction.getTransType().equals("SELL")) {
-              quantity -= sellTransaction.getQty();
-            }
-          }
+        userSelection = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
 
-          if (quantity > 0) {
-            System.out.println(transaction.getTicker() + "   " + quantity);
-
-          }
+        switch (userSelection) {
+          case 0 -> System.out.println("Returning to Main Menu...");
+          case 1 -> addStockEntry(transactionHistory, portfolioId);
+          case 2 -> transactionHistory.printTransactionHistory(portfolioId);
+          default -> System.out.println("Invalid choice. Please select 0, 1, or 2.");
         }
-
+      } catch (InputMismatchException e) {
+        System.out.println("Please enter a valid number!");
+        scanner.nextLine(); // Clear invalid input
       }
     }
-    System.out.println();
-
   }
 
-  // method checks if the amount isn't greater than the cashBalance
+  private void addStockEntry(TransactionHistory transactionHistory, int portfolioId) {
+    Scanner scanner = new Scanner(System.in);
 
-  private boolean sufficientBalance(double amount) {
-    double cashBalance = 0.0;
-    for (TransactionHistory transaction: portfolioList) {
-      if (transaction.getTicker().equals("CASH")) {
-        cashBalance += transaction.getQty();
+    System.out.print("Enter the stock ticker symbol: ");
+    String ticker = scanner.nextLine();
 
-      }
+    System.out.print("Enter the number of shares: ");
+    int shares = scanner.nextInt();
 
-    }
-    return cashBalance >= amount;
+    System.out.print("Enter the purchase price per share: ");
+    double price = scanner.nextDouble();
 
-  }
-
-  // method for pulling current date and time
-
-  private String getCurrentDate() {
-    Date currentDate = new Date();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    return dateFormat.format(currentDate);
+    transactionHistory.addTransaction(portfolioId, ticker, shares, price);
   }
 }
