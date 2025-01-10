@@ -37,10 +37,16 @@ public class PortfolioManager {
   private void showMainMenu(Connection connection) {
     Scanner scnr = new Scanner(System.in);
     int userSelection = -1;
+    String name;
+
+    System.out.print("Please enter your name: ");
+    name = scnr.nextLine();
+
+
 
     while (userSelection != 0) {
       try {
-        System.out.println("\nKyle Hodo Brokerage Account");
+        System.out.println("\n" + name + "'s Brokerage Account");
         System.out.println("===============================");
         System.out.println("0 - Exit");
         System.out.println("1 - Create a New Portfolio");
