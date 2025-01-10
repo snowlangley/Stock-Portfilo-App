@@ -1,68 +1,120 @@
-# Portfolio Manager Application
+# Stock Portfolio Management System
 
-**Author:** Kyle Hodo  
-**Date Created:** June 12, 2023  
-
-## Overview
-
-The **Portfolio Manager Application** is a Java-based system designed to simulate a stock portfolio management environment. Users can perform various financial operations, such as depositing or withdrawing cash, buying or selling stocks, and viewing transaction histories. This application mimics brokerage account functionalities, providing an intuitive interface to manage stock investments.
+This is a Java-based application designed to manage a stock portfolio. It provides functionality for creating and managing portfolios, executing stock transactions, and viewing transaction histories.
 
 ---
 
 ## Features
 
-- **Deposit Cash**: Add funds to the portfolio account.
-- **Withdraw Cash**: Remove funds from the portfolio, ensuring sufficient balance.
-- **Buy Stock**: Purchase stocks by specifying details like ticker, quantity, and cost basis.
-- **Sell Stock**: Sell stocks with similar detail inputs.
-- **Transaction History**: Review a detailed log of all past transactions.
-- **Portfolio Summary**: View the current portfolio, including cash balance and stock holdings.
+- **Portfolio Management**: Create, view, and manage multiple stock portfolios.
+- **Stock Transactions**: Add, view, and record stock transactions (buy/sell).
+- **Database Integration**: Data is stored in a MySQL database for persistence.
+- **Interactive Console**: User-friendly, menu-driven command-line interface.
 
 ---
 
-## Components
+## Project Structure
 
-### PortfolioManager.java
-- **Core Logic**: Manages user interactions and portfolio operations.
-- **Transactions**: Uses `TransactionHistory` to log all transactions.
-- **Utilities**: Provides methods for balance checks, portfolio display, and date formatting.
+### Source Files
 
-### TransactionHistory.java
-- **Attributes**: Stores transaction details such as ticker, type (buy, sell, deposit, withdraw), date, quantity, and cost basis.
-- **Methods**: Includes `toPrint()` for formatted transaction output and standard getters/setters.
+1. **DatabaseConnection.java**  
+   Manages the database connection using JDBC and configurations provided in `dbconfig.properties` or `dbconfig.template.properties`.
 
----
+2. **DatabaseInitializer.java**  
+   Initializes the database by creating necessary tables (`Portfolios` and `Transactions`) if they do not exist.
 
-## How It Works
+3. **PortfolioManager.java**  
+   Core application logic, including menus for portfolio management and stock transactions.
 
-1. **Interactive Menu**: Users navigate an intuitive menu-driven interface.
-2. **Transaction Processing**: Validates and records user transactions dynamically.
-3. **Data Management**: Stores transactions for easy retrieval and review.
-4. **Real-Time Updates**: Reflects portfolio changes, including cash balance and stock holdings.
+4. **TransactionHistory.java**  
+   Handles transaction records and provides methods to add or fetch transaction history for portfolios.
 
----
+### Configuration Files
 
-## Setting Up the Database Connection
+- **dbconfig.properties**  
+  Contains the database connection URL for the application.
 
-### Prerequisites
-1. Ensure a MySQL server is installed and running.
-
-db.url=jdbc:mysql://<HOST>:<PORT>/<DATABASE_NAME>?useSSL=false&serverTimezone=UTC
-
-3. Create a database named `PortfolioDB` and configure the schema.
-
-### Configuration
-1. Add a file named `dbconfig.properties` to the `src` folder with the following format:
-
-2. Run the program to connect to the database.
-
-### Database Initialization
-The program initializes the database schema automatically on the first run.
+- **dbconfig.template.properties**  
+  Template for setting up the database connection URL with placeholders.
 
 ---
 
-## Usage Instructions
+## Database Schema
 
-1. **Compile the Program**:
-```bash
-javac -d out -sourcepath src src/PortfolioManager.java src/TransactionHistory.java src/DatabaseConnection.java src/DatabaseInitializer.java
+### Tables
+
+1. **Portfolios**
+   - `PortfolioID` (INT, Primary Key, Auto-Increment)
+   - `Name` (VARCHAR, NOT NULL)
+   - `Owner` (VARCHAR, NOT NULL)
+
+2. **Transactions**
+   - `TransactionID` (INT, Primary Key, Auto-Increment)
+   - `PortfolioID` (INT, Foreign Key to `Portfolios`)
+   - `Ticker` (VARCHAR, NOT NULL)
+   - `Shares` (INT, NOT NULL)
+   - `Price` (DOUBLE, NOT NULL)
+
+---
+
+## Prerequisites
+
+- Java 8 or later
+- MySQL Database
+- JDBC MySQL Driver
+
+---
+
+## Setup and Usage
+
+### 1. Configure Database Connection
+- Copy `dbconfig.template.properties` to `dbconfig.properties`.
+- Update `dbconfig.properties` with your database details:
+  ```properties
+  db.url=jdbc:mysql://<HOST>:<PORT>/<DB_NAME>?useSSL=false&serverTimezone=UTC
+  ```
+
+### 2. Compile and Run
+- Compile the Java files:
+  ```bash
+  javac *.java
+  ```
+- Run the main application:
+  ```bash
+  java PortfolioManager
+  ```
+
+### 3. Application Workflow
+1. Launch the application.
+2. Enter your name to start.
+3. Select options from the main menu:
+   - Create a new portfolio.
+   - Access existing portfolios.
+4. Manage stocks within portfolios:
+   - Add transactions.
+   - View transaction history.
+
+---
+
+## Future Enhancements
+
+- Add support for more transaction types (e.g., sell, dividends).
+- Enhance user interface with a graphical version.
+- Implement authentication for better user security.
+- Support for multiple databases (e.g., PostgreSQL, SQLite).
+
+---
+
+## Author
+
+**Kyle Hodo**  
+Created on: 06/12/2023  
+
+---
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).  
+
+Feel free to contribute or raise issues on GitHub!
+
