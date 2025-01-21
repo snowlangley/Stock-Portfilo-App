@@ -109,12 +109,3 @@ This is a Java-based application designed to manage a stock portfolio. It provid
 
 **Kyle Hodo**  
 Created on: 06/12/2023  
-
----
-
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).  
-
-Feel free to contribute or raise issues on GitHub!
-
