@@ -32,31 +32,35 @@ public class DatabaseConnection {
             return null;
         }
 
-        try {
-            Scanner scanner = new Scanner(System.in);
-
-            // Ask for username
-            System.out.print("Enter Database Name: ");
-            String dbName = scanner.nextLine();
-
-            // Ask for Password
-            System.out.print("Enter Database Password: ");
-            String dbPass = scanner.nextLine();
+        Scanner scanner = new Scanner(System.in);
+        Connection connection = null;
 
 
-            // Load the MySQL JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(URL, dbName, dbPass);
-            System.out.println("Database connection established");
-            return connection;
-        } catch (ClassNotFoundException e) {
-            System.out.println("MySQL JDBC Driver not found.");
-            e.printStackTrace();
-            return null;
-        } catch (SQLException e) {
-            System.out.println("Connection to database failed.");
-            e.printStackTrace();
-            return null;
+        while (connection == null) {
+            try {
+
+                // Ask for username
+                System.out.print("Enter Database username: ");
+                String dbName = scanner.nextLine();
+
+                // Ask for Password
+                System.out.print("Enter Database Password: ");
+                String dbPass = scanner.nextLine();
+
+
+                // Load the MySQL JDBC driver
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                connection = DriverManager.getConnection(URL, dbName, dbPass);
+                //System.out.println("Database connection established");
+            } catch (ClassNotFoundException e) {
+                System.out.println("MySQL JDBC Driver not found.");
+                //e.printStackTrace();
+                return null;
+            } catch (SQLException e) {
+                System.out.println("Connection to database failed. Incorrect credentials.");
+                //e.printStackTrace();
+            }
         }
+        return connection;
     }
 }

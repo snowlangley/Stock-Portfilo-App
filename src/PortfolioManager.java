@@ -17,8 +17,15 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import javafx.application.Application; // Base class for JavaFX applications.
+import javafx.stage.Stage;             // Represents the main window (or stage) of the application.
+import javafx.scene.Scene;             // Holds the content of your stage.
+import javafx.scene.layout.VBox;       // A simple vertical layout for organizing UI elements.
+import javafx.scene.control.Button;    // Basic UI control for user interaction.
+
 
 public class PortfolioManager {
+
 
   public static void main(String[] args) {
     PortfolioManager portfolioManager = new PortfolioManager();
