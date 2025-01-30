@@ -71,7 +71,7 @@ This is a Java-based application designed to manage a stock portfolio. It provid
 - Copy `dbconfig.template.properties` to `dbconfig.properties`.
 - Update `dbconfig.properties` with your database details:
   ```properties
-  db.url=jdbc:mysql://<HOST>:<PORT>/<DB_NAME>?useSSL=false&serverTimezone=UTC
+  url=jdbc:mysql://<HOST>:<PORT>/<DB_NAME>?useSSL=false&serverTimezone=UTC
   ```
 
 ### 2. Compile and Run
